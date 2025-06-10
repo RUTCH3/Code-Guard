@@ -131,12 +131,5 @@ def checkout(id_commit):
         click.echo(click.style(f'13. Error while checkout: {e}', fg="red"))
 
 
-@cli.command()
-def push():
-    """push the last commits to a remote repo,
-    and analysis the code from lint errors."""
-    pass
-
-
 if __name__ == "__main__":
     cli()
