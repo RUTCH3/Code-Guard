@@ -1,8 +1,3 @@
-
----
-
-### ✅ **2. Python-Project** (`README.md`)
-```markdown
 # Version Control CLI Tool
 
 A Python-based CLI tool for easy and flexible version management using the Click library.
