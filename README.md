@@ -16,3 +16,4 @@ A Python-based CLI tool for easy and flexible version management using the Click
 ## Usage
 ```bash
 python main.py --help
+```

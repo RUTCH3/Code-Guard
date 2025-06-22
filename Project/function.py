@@ -1,19 +1,17 @@
-import click
 import os
-
-import pyfiglet
-
-from Classes import Repository, File, Commit
-import json
 import shutil
 from typing import List
+import json
+import pyfiglet
+import click
+from classes import Repository, File, Commit
 
 
 def load_repo():
     """Load the repo data from the file that contain the repo data."""
     try:
         if os.path.exists('repo.json') and os.path.getsize('repo.json') > 0:
-            with open('repo.json', 'r') as f:
+            with open('repo.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 repo = Repository(data['name_repo'])
                 repo.list_commits = data['list_commits']
@@ -26,12 +24,12 @@ def load_repo():
 
 
 def save_repo(repo: Repository):
-    """Saving the repo to a file that contain the repo data."""
+    """Saving the repo to a file that contains the repo data."""
     try:
         if repo is not None and isinstance(repo, Repository):
             existing_data = {}
             if os.path.exists('repo.json') and os.path.getsize('repo.json') > 0:
-                with open('repo.json', 'r') as f:
+                with open('repo.json', 'r', encoding='utf-8') as f:
                     existing_data = json.load(f)
             existing_data['name_repo'] = getattr(repo, 'name_repo', None)
             existing_data['list_commits'] = existing_data.get('list_commits', [])
@@ -52,7 +50,7 @@ def save_repo(repo: Repository):
                 else:
                     print(click.style("failed", fg="red"))
 
-            with open('repo.json', 'w') as f:
+            with open('repo.json', 'w', encoding='utf-8') as f:
                 json.dump(existing_data, f, indent=20)
         else:
             raise ValueError("Invalid repo object provided.")
@@ -101,14 +99,14 @@ def create_repo():
 
 
 def create_directory(path, success_message):
-    """A function that create a directory in accepted path."""
+    """A function that creates a directory in an accepted path."""
     if not os.path.exists(path):
         os.mkdir(path)
         click.echo(click.style(success_message, fg="green"))
 
 
 def move_files(source_dir, dest_dir):
-    """Specific function to remove tha files from staging to the commited."""
+    """Specific function to remove the files from staging to the commited."""
     check_path(source_dir, dest_dir)
     for item in os.listdir(source_dir):
         item_path = os.path.join(source_dir, item)
@@ -116,24 +114,24 @@ def move_files(source_dir, dest_dir):
 
 
 def get_last_commit(file_path: str, new_value=None):
-    """Copy the files who hasn't added to staging from the last commit."""
+    """Copy the files who haven't added to staging from the last commit."""
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         if new_value is not None:
             data['prev'] = new_value
-            with open(file_path, 'w') as f:
+            with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4)
             return str(new_value)
         else:
             if data['prev'] == 0:
-                raise Exception("No commit in the repository.")
+                raise OSError("No commit in the repository.")
             return str(data.get('prev', None))
 
-    except FileNotFoundError: #check commit
-        raise Exception(f"The file {file_path} does not exist.")
-    except json.JSONDecodeError:
-        raise Exception(f"The file {file_path} is not a valid JSON file.")
+    except FileNotFoundError as exc:  # check commit
+        raise f"The file {file_path} does not exist: {exc}."
+    except json.JSONDecodeError as jsn:
+        raise f"The file {file_path} is not a valid JSON file: {jsn}."
 
 
 def checkout_files(source_dir, dest_dir):
@@ -147,10 +145,10 @@ def checkout_files(source_dir, dest_dir):
 def check_path(source, dest=None):
     """Checking the accepted path if it valid."""
     if not os.path.exists(source):
-        raise Exception("Source directory does not exist.")
+        raise FileExistsError("Source directory does not exist.")
     if dest:
         if not os.path.exists(dest):
-            raise Exception("Error: Repository is not initialized. Please run 'wit init' first.")
+            raise FileExistsError("Error: Repository is not initialized. Please run 'wit init' first.")
 
 
 def copy_files(source_dir, dest_dir, files: List[str], ignore_list: List[str] = None):
@@ -171,22 +169,22 @@ def copy_files(source_dir, dest_dir, files: List[str], ignore_list: List[str] = 
             if os.path.isfile(full_file_name):
                 shutil.copy(full_file_name, dest_dir)
             elif os.path.isdir(full_file_name):
-                shutil.copytree(full_file_name, os.path.join(dest_dir, filename), dirs_exist_ok=True,
-                                ignore=shutil.ignore_patterns(*ignore_list))
+                shutil.copytree(full_file_name, os.path.join(dest_dir, filename),
+                                dirs_exist_ok=True, ignore=shutil.ignore_patterns(*ignore_list))
             else:
                 click.echo(f"Item '{filename}' does not exist in the source directory.")
 
-    except Exception as e:
+    except MemoryError as e:
         click.echo(f"Error copying files: {e}")
 
 
 def copy_all_files(source, dest):
     """Specific function to copy files from the last commit if they not in the commit directory."""
     if not os.path.exists(source):
-        raise Exception("Source directory does not exist.")
+        raise FileExistsError("Source directory does not exist.")
 
     if not os.path.exists(dest):
-        raise Exception("Error: Repository is not initialized. Please run 'wit init' first.")
+        raise FileExistsError("Error: Repository is not initialized. Please run 'wit init' first.")
 
     for filename in os.listdir(source):
         source_file = os.path.join(source, filename)

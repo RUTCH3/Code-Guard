@@ -1,2 +1,2 @@
 @echo off
-python "G:\Python\PROJECTPYTHON\7\Project\CLI.py" %*
+python "C:\2025\PYTHON\WIT_Project\Python-Project\Project\cli.py" %*

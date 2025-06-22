@@ -1,17 +1,19 @@
+"""This module contains the classes in the project."""
 import os
 from datetime import datetime
 from typing import List
-
 import click
 
 
 class File:
+    """A class to save the files' data."""
     def __init__(self, name, path):
         self.name = name
         self.path = path
         self.last_modified = datetime.fromtimestamp(os.path.getmtime(self.path)).isoformat()
 
     def is_last_modified(self):
+        """A function that checks if there was any change in the file."""
         new_time = datetime.fromtimestamp(os.path.getmtime(self.path)).isoformat()
         if new_time != self.last_modified:
             self.last_modified = new_time
@@ -22,6 +24,7 @@ class File:
 
 
 class Commit:
+    """A class to save the commit data."""
     def __init__(self, message, list_files):
         self.commit_id = id(self)
         self.message = message
@@ -31,19 +34,22 @@ class Commit:
     def __str__(self):
         return (f'commit id: {self.commit_id}\n'
                 f'date: {self.date}\n'
-                f'files: {[file for file in self.list_files]}')
+                f'files: {list(self.list_files)}')
 
 
 class Repository:
+    """A class to save the repo data."""
     def __init__(self, name_repo: str):
         self.id_repo = id(self)
         self.name_repo: str = name_repo
         self.list_commits: List[Commit] = []
         self.list_files = self.get_directory_structure(".")
         self.staging: List[File] = []
-        self.wit_ignore = [".wit", ".venv", ".venv1", ".idea", "__pycache__", "repo.json", "prev.json", "wit.bat"]
+        self.wit_ignore = [".wit", ".venv", ".venv1", ".idea",
+                           "__pycache__", "repo.json", "prev.json", "wit.bat"]
 
     def get_directory_structure(self, path):
+        """A function that returns the directory structure."""
         structure = {}
         with os.scandir(path) as entries:
             for entry in entries:
@@ -74,7 +80,8 @@ class Repository:
 def print_structure(structure, indent=0):
     for name, item in structure.items():
         if isinstance(item, File):
-            print("  " * indent + f"File: {item.name}, Path: {item.path}, Last Modified: {item.last_modified}")
+            print("  " * indent + f"File: {item.name}, Path: {item.path}, "
+                                  f"Last Modified: {item.last_modified}")
         else:
             print("  " * indent + f"Directory: {name}")
             print_structure(item, indent + 1)
