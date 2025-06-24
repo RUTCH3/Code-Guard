@@ -1,6 +1,8 @@
+from importlib import reload
+
 import uvicorn
 from fastapi import FastAPI
-from app.routes import analyze, alerts
+from routes import analyze, alerts
 
 app = FastAPI()
 

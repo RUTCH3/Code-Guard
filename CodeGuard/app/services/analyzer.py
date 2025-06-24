@@ -10,9 +10,13 @@ def analyze_code(file_paths: List[str]) -> Dict[str, dict]:
 
     for path in file_paths:
         with open(path, "r", encoding="utf-8") as file:
-            source_code = file.read()
-
-        tree = ast.parse(source_code)
+            content = file.read()
+            source_code = content.decode('utf-8')
+        tree = {}
+        try:
+            tree = ast.parse(source_code)
+        except Exception as e:
+            print("Error parsing source code:", e)
         file_data = {
             "functions": [],
             "lines": len(source_code.splitlines())

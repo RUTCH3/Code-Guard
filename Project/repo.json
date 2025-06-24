@@ -1,5 +1,5 @@
 {
-  "name_repo": "\u05e8\u05d5\u05d0\u05df",
+  "name_repo": "Pipy",
   "list_commits": [
     {
       "id_commit": 1746648054288,
@@ -9,6 +9,18 @@
         "Classes.py",
         "CLI.py",
         "Function.py"
+      ]
+    },
+    {
+      "id_commit": 1335554930880,
+      "message": ":fire: First commit.",
+      "date": "24/06/2025 00:32:28",
+      "list_files": [
+        ".gitignore",
+        ".ruff_cache",
+        "classes.py",
+        "cli.py",
+        "function.py"
       ]
     }
   ],

@@ -145,31 +145,13 @@ def checkout(id_commit):
 def push(route):
     """push the last commits to a remote repo,
     and analysis the code from lint errors."""
-    repo = function.load_repo()
-    if repo.list_commits != '':
-        commits_list: List[Commit] = repo.list_commits
-        # item = {"files": commits_list[-1]['list_files']}
-        # print(item)
-        files = []
-        for file_path in commits_list[-1]['list_files']:
-            commit1 = commits_list[-1]['id_commit']
-            full_path = f"./.wit/{repo.name_repo}/Commited/{commit1}/{file_path}"
-            if os.path.isfile(full_path):  # Only open if it's a file
-                files.append(('files', open(full_path, 'rb')))
-            # commit1 = commits_list[-1]['id_commit']
-            # print(commit1)
-            # # commit_id = commit1
-            # files.append(
-            #     ('files', open(f"./.wit/{repo.name_repo}/Commited/{commit1}/{file_path}", 'rb')))
-
-        try:
-            response = requests.post(f"http://localhost:8000/{route}/", files=files)
-            print('after get response')
-            click.echo(click.style(response.text, fg="green"))
-        except Exception as e:
-            click.echo(click.style(f'15. Error while push: {e}', fg="red"))
-    else:
-        click.echo(click.style('16. Everything is upto date.\nNothing to commit.', fg='red'))
+    item = {}
+    try:
+        response = requests.post(f"https://localhost:8000/{route}/",json=item)
+        print(response.json())
+    except Exception as e:
+        pass
+    pass
 
 
 if __name__ == "__main__":
